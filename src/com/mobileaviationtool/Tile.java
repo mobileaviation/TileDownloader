@@ -1,6 +1,11 @@
 package com.mobileaviationtool;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by Rob Verhoef on 17-11-2016.
@@ -10,6 +15,18 @@ public class Tile {
     public int y;
     public int z;
     public Coordinate tile;
+
+    public Tile()
+    {
+
+    }
+    public Tile(int x, int y, int z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.tile = new Coordinate(this.x, this.y, this.z);
+    }
 
     public void getTileNumber(final double lat, final double lon, final int zoom)
     {
@@ -26,5 +43,20 @@ public class Tile {
         this.z = zoom;
 
         this.tile = new Coordinate(this.x, this.y, this.z);
+    }
+
+    public String Url()
+    {
+        return "http://tile.openstreetmap.org/" + z + "/" + x + "/" + y + ".png";
+    }
+
+    public void DownloadFile(String localPath, String baseName)
+    {
+        try {
+            String f = localPath + "\\" + baseName + z + "-" + x + "-" + y + ".png";
+            FileUtils.copyURLToFile(new URL(Url()), new File(f));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

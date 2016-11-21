@@ -14,6 +14,8 @@ public class Main {
         double lat = 47.96805d;
         double lon = 7.909167d;
 
+        String localPath = "C:\\Users\\Rob Verhoef.WIN7-ROBVERHOEF\\Documents\\Openstreetmap";
+
         Tile tt = new Tile();
         //tt.getTileNumber(lat, lon, zoom);
 
@@ -39,11 +41,9 @@ public class Main {
         int tileCount = 0;
         for (int z = 6; z <= 13; z++) {
             tt.getTileNumber(testCoords[1].y, testCoords[0].x, z);
-            //System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
             int xBegin = tt.x;
             int yBegin = tt.y;
             tt.getTileNumber(testCoords[3].y, testCoords[2].x, z);
-            //System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
             int xEnd = tt.x;
             int yEnd = tt.y;
 
@@ -54,18 +54,41 @@ public class Main {
                     bb.tile2boundingBox(x,y,z);
                     if (testBuffer.buffer.intersects(bb.bbbox))
                     {
-                        System.out.println("http://tile.openstreetmap.org/" + z + "/" + x + "/" + y + ".png");
                         tileCount++;
-                    }
-                    else
-                    {
-                        System.out.println(z + "/" + x + "/" + y + " is outside of buffer");
                     }
                 }
 
             }
 
         }
+
+        int downloadTileCount = 0;
+        for (int z = 6; z <= 13; z++) {
+            tt.getTileNumber(testCoords[1].y, testCoords[0].x, z);
+            int xBegin = tt.x;
+            int yBegin = tt.y;
+            tt.getTileNumber(testCoords[3].y, testCoords[2].x, z);
+            int xEnd = tt.x;
+            int yEnd = tt.y;
+
+            for (int x = xBegin; x<=xEnd; x++) {
+                for (int y = yBegin; y <= yEnd; y++) {
+                    bb.tile2boundingBox(x, y, z);
+                    if (testBuffer.buffer.intersects(bb.bbbox)) {
+                        Tile tile = new Tile(x, y, z);
+
+                        float percentage = ((float) downloadTileCount / (float) tileCount) * 100;
+
+                        System.out.println(tile.Url() + "    : Percentage: " + Math.round(percentage));
+                        tile.DownloadFile(localPath, "osm");
+                        downloadTileCount++;
+                    } else {
+                        System.out.println(z + "/" + x + "/" + y + " is outside of buffer");
+                    }
+                }
+            }
+        }
+
         System.out.println("Total Tile Count: " + tileCount);
     }
 }
