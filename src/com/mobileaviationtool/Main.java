@@ -33,21 +33,39 @@ public class Main {
 //        Geometry testBox = new GeometryFactory().createPolygon(testCoords);
 
         TestBuffer testBuffer = new TestBuffer();
-        Geometry testBox = testBuffer.envelope;
-        Coordinate[] testCoords = testBox.getCoordinates();
+        Coordinate[] testCoords = testBuffer.envelope.getCoordinates();
 
-        for (int z = 6; z <= 12; z++) {
-            tt.getTileNumber(testCoords[0].y, testCoords[0].x, z);
-            System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
-            tt.getTileNumber(testCoords[2].y, testCoords[2].x, z);
-            System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
+
+        int tileCount = 0;
+        for (int z = 6; z <= 13; z++) {
+            tt.getTileNumber(testCoords[1].y, testCoords[0].x, z);
+            //System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
+            int xBegin = tt.x;
+            int yBegin = tt.y;
+            tt.getTileNumber(testCoords[3].y, testCoords[2].x, z);
+            //System.out.println("http://tile.openstreetmap.org/" + tt.z + "/" + tt.x + "/" + tt.y + ".png");
+            int xEnd = tt.x;
+            int yEnd = tt.y;
+
+            for (int x = xBegin; x<=xEnd; x++)
+            {
+                for (int y = yBegin; y<=yEnd; y++)
+                {
+                    bb.tile2boundingBox(x,y,z);
+                    if (testBuffer.buffer.intersects(bb.bbbox))
+                    {
+                        System.out.println("http://tile.openstreetmap.org/" + z + "/" + x + "/" + y + ".png");
+                        tileCount++;
+                    }
+                    else
+                    {
+                        System.out.println(z + "/" + x + "/" + y + " is outside of buffer");
+                    }
+                }
+
+            }
+
         }
-
-        bb.tile2boundingBox(tt.x, tt.y, tt.z);
-        boolean i = testBox.intersects(bb.bbbox);
-
-        System.out.println(i);
+        System.out.println("Total Tile Count: " + tileCount);
     }
-
-
 }

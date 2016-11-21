@@ -12,7 +12,7 @@ public class TestBuffer {
     {
         WKTReader reader = new WKTReader();
         try {
-            buffer = reader.read(antwerpMonchen);
+            buffer = reader.read(lelystadTexel);
             envelope = buffer.getEnvelope();
         } catch (ParseException e) {
             e.printStackTrace();
